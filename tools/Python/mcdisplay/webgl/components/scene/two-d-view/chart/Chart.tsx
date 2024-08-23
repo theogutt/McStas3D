@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import "../../../../common.css";
 import Plot from "react-plotly.js";
+import Plotly from "plotly.js-dist";
 import "./chart.css";
 import { usePlotRangeContext } from "../../../../Contexts/PlotRangeContext";
 
@@ -15,7 +16,7 @@ const Chart: React.FC<ChartProps> = ({
   xAxisLabel,
   yAxisLabel,
 }) => {
-  const { plotlyRanges } = usePlotRangeContext();
+  const { plotlyRanges, updatePlotlyRanges } = usePlotRangeContext();
 
   const layout = {
     title: chartTitle,
@@ -66,17 +67,15 @@ const Chart: React.FC<ChartProps> = ({
     staticPlot: false,
   };
 
-  return (
-    <div id={`plotlyDiv-${chartTitle}`} className="chart">
-      <Plot
-        data={[]}
-        layout={layout}
-        config={config}
-        useResizeHandler
-        style={{ width: "100%", height: "100%" }}
-      />
-    </div>
-  );
+  const plotId = useRef(null);
+  const plot = useRef<Plotly.Plot>(null);
+
+  useEffect(() => {
+    const plot = Plotly.newPlot(`plotlyDiv-${chartTitle}`, [], layout, config);
+    plot.current = plot;
+  }, [plotId]);
+
+  return <div id={`plotlyDiv-${chartTitle}`} className="chart"></div>;
 };
 
 export default Chart;

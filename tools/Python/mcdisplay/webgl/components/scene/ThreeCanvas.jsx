@@ -203,12 +203,40 @@ const ThreeCanvas = () => {
           primaryCameraRef.current = camera;
           primaryControlsRef.current = view.controls;
         }
+        updateRangeWhenPanning(view.view);
         camera.updateProjectionMatrix();
         rendererRef.current.render(sceneRef.current, camera);
       });
     }
   }
 
+  function updateRangeWhenPanning(viewName) {
+    const refSidePlotly = document.getElementById("plotlyDiv-Side");
+    refSidePlotly.on("plotly_relayout", function (eventData) {
+      const xRange = eventData["xaxis.range"];
+      const min_xaxis = xRange[0];
+      const max_xaxis = xRange[1];
+      const yRange = eventData["yaxis.range"];
+      const min_yaxis = yRange[0];
+      const max_yaxis = yRange[1];
+
+      console.log("panning");
+      console.log(min_xaxis, min_yaxis, max_xaxis, max_yaxis);
+      if (
+        min_xaxis === undefined ||
+        min_yaxis === undefined ||
+        max_xaxis === undefined ||
+        max_yaxis === undefined
+      )
+        return;
+        /*
+      updatePlotlyRanges(viewName, {
+        xaxis: [min_xaxis, max_xaxis],
+        yaxis: [min_yaxis, max_yaxis],
+      });
+      */
+    });
+  }
   function setScissorForElement(elem) {
     const canvasRect = containerRef.current.getBoundingClientRect();
     const elemRect = elem.getBoundingClientRect();
